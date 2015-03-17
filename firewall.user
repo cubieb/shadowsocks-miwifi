@@ -1,0 +1,24 @@
+#
+#TARGET: /etc/firewall.user
+#
+#config in /etc/config/firewall
+#
+# This file is interpreted as shell script.
+# Put your custom iptables rules here, they will
+# be executed with each firewall (re-)start.
+
+# Internal uci firewall chains are flushed and recreated on reload, so
+# put custom rules into the root chains e.g. INPUT or FORWARD or into the
+# special user chains, e.g. input_wan_rule or postrouting_lan_rule.
+#
+#for temp overwrite system firewall config
+#
+#/usr/sbin/iptables -I FORWARD -j ACCEPT
+#/usr/sbin/iptables -I INPUT -j ACCEPT
+#/usr/sbin/iptables -I OUTPUT -j ACCEPT
+#/usr/sbin/iptables -I POSTROUTING -t nat -o eth0.2 -j MASQUERADE
+#/usr/sbin/iptables -I POSTROUTING -t nat -o pppoe-wan -j MASQUERADE
+#/sbin/sysctl -w net.ipv4.ip_forward=1
+#
+ipset -N setmefree iphash -!
+iptables -t nat -A PREROUTING -p tcp -m set --match-set setmefree dst -j REDIRECT --to-port 1082
